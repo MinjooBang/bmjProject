@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="org.mjmj.mapper.BoardMapper">
+ 
+ <select id="getList" resultType="org.mjmj.domain.BoardVO">
+	 <![CDATA[
+	  SELECT *
+	  FROM BOOK_EX
+	  WHERE BNO > 0
+	 ]]>
+ </select>
+ 
+ <insert id="insert">
+ 	<selectKey keyProperty="bno" order="BEFORE" resultType="long">
+ 	 SELECT bno+1
+ 	 FROM book_ex
+ 	 ORDER BY bno DESC
+ 	 LIMIT 1
+ 	
+ 	</selectKey>
+ 	INSERT INTO BOOK_EX (bno,title,contents,writer)
+ 	VALUES (#{bno},#{title}, #{contents},#{writer})
+ </insert>
+
+<select id="read" resultType="org.mjmj.domain.BoardVO">
+	select * from book_ex where bno = #{bno}
+</select>
+
+<delete id="delete">
+	delete from book_ex where bno = #{bno}
+</delete>
+
+<update id="update">
+	update book_ex
+	set title = #{title},
+	contents = #{contents},
+	writer = #{writer},
+	updatedate = now()
+	where bno = #{bno}
+</update>
+ 
+ 
+ <select id="getListWithPaging" resultType="org.mjmj.domain.BoardVO">
+	 <![CDATA[
+	  SELECT
+	  		bno,
+	  		title,
+	  		contents,
+	  		writer,
+	  		regdate,
+	  		updatedate
+	  FROM 
+	  	(
+	 		SELECT 	/*+INDEX_DESC(book_ex pk_board)*/
+	 				 ROW_NUMBER() OVER() AS rownum , bno,title,contents,writer,regdate,updatedate
+	 		FROM book_ex
+	 	 	
+	  ]]>
+	  <include refid="criteria"></include>
+		  
+	  <![CDATA[
+		  	ORDER BY bno
+		  	LIMIT #{pagenum} * #{amount}
+	 	) as a
+	 WHERE a.rownum > (#{pagenum} - 1) * #{amount}
+	 ]]>
+ </select>
+ 
+ <sql id="criteria">
+ 	WHERE 1 = 1
+ 	<trim prefix="AND (" suffix=")"  prefixOverrides="OR">
+	  	<foreach item='type' collection="typeArr">
+			<trim prefix="OR">
+				<choose>
+					<when test="type == 'T'.toString()" >
+						title like '%' || #{keyword} || '%'
+					</when>
+					<when test="type == 'C'.toString()" >
+						contents like '%' || #{keyword} || '%'
+					</when>
+					<when test="type == 'W'.toString()" >
+						writer like '%' || #{keyword} || '%'
+					</when>
+				</choose>
+			</trim>		
+	  	</foreach>
+	  </trim>
+ </sql>
+ 
+ <select id="getTotalCount" resultType="int">
+  <![CDATA[
+ 	SELECT 
+ 		COUNT(*)
+ 	FROM book_ex
+ 	WHERE bno > 0
+ 	]]>
+ </select>
+ 
+ </mapper>
