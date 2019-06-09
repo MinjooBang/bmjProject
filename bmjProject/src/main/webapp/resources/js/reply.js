@@ -1,6 +1,8 @@
 console.log("reply module......");
 
-var replyService = (function(){
+var replyService = (
+		
+function(){
 	function add(reply,callback,error){
 		console.log("add reply....");
 		$.ajax({
@@ -39,6 +41,49 @@ var replyService = (function(){
 				}
 			});
 		
-	}
-	return {add:add,getList:getList};
+	}//getList
+	
+	function remove(rno,callback,error){
+		console.log(rno);
+		$.ajax({
+			type:'delete',
+			url:'/replies/'+rno,
+			success:function(deleteResult,status,xhr){
+				if(callback){
+					callback(deleteResult);
+				}
+			},
+			error:function(xhr,status,er){
+				if(error){
+					error(er);
+				}
+			}
+		});
+	}//remove
+	
+	function update(reply,callback,error){
+		console.log("RNO :"+reply.rno);
+		$.ajax({
+			type:'put',
+			url:'/replies/'+reply.rno,
+			data:JSON.stringify(reply),
+			contentType:"application/json;charset=UTF-8",
+			success:function(result,status,xhr){
+				if(callback){
+					callback(result);
+				}
+			},
+			error:function(xhr,status,er){
+				if(error){
+					error(er);
+				}
+			}
+		});
+	}//update
+	
+	return {add:add,
+			getList:getList,
+			remove:remove,
+			update:update};
+	
 })();

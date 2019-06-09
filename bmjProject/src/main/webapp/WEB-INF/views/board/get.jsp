@@ -66,24 +66,53 @@
 	console.log("===============");
 	console.log("JS test");
 	
-	var bnoValue = '<c:out value="${board.bno}"/>';
-	//for replyservice add test
+	 var bnoValue = '<c:out value="${board.bno}"/>';
+	 /*//for replyservice add test
 	replyService.add(
 		{reply:"증말.. 이게 뭐야  " ,replyer:"또 안됨.. 민주 화남",bno:bnoValue},
 		function (result){
 			alert("Result : "+result);
 		}
-	);
+	); */
 	
 	console.log("===============");
 	console.log("JS test2");
 	replyService.getList({bno:bnoValue,page:1},function(list){
-		len = list.length || 0 ;
-		for(var i =0 ;  i<len ;i++ ){
-			console.log(listp[i]);
-		}
+		
+		for(var i =0 ,len = list.length || 0 ; i<len ;i++ ){
+			console.log(list[i]);
+		} 
 	});
+	console.log("===============");
+	console.log("오늘 한게 다 안되면 어케..?");
+	/* //28 delete test 이게 안됨...
+	replyService.remove(28,function(count){
+		console.log(count);
+		if(count === "success"){
+			alert("성공좀... 나와라");
+		}
+	},function(err){alert('error..')});
+	 replyService.update({
+		 rno: 27,
+		 bno:bnoValue,
+		 reply:"난 오늘밤도 너를 떠올려 지금 이순간에도 어김없이 너를 떠올려 니가 모르게~~~~~~"
+	 },function(result){
+		 alert("로꼬의 니가 모르게~~~");
+	 });
+	 */
 	
+	 
+	 replyService.update(
+		{ rno: 27,
+			 bno:bnoValue,
+			 reply:"난 오늘밤도 너를 떠올려 지금 이순간에도 어김없이 너를 떠올려 니가 모르게~~~~~~"},
+				function (result){
+				 alert("로꼬의 니가 모르게~~~");
+				}
+			);
+	 
+	 
+	 
 	</script>
  	 
      
